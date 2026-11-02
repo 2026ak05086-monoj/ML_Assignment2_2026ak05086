@@ -15,11 +15,14 @@ retraining.
 - [x] Stage 1 — Project scaffold & environment
 - [x] Stage 2 — Data acquisition & exploration
 - [x] Stage 3 — Preprocessing & train/test split
-- [ ] Stage 4 — Logistic Regression, Decision Tree, KNN
-- [ ] Stage 5 — Naive Bayes & SVM
-- [ ] Stage 6 — Evaluation & model comparison
-- [ ] Stage 7 — Streamlit app
-- [ ] Stage 8 — Documentation & deployment
+- [x] Stage 4 — Logistic Regression (baseline + tuned)
+- [ ] Stage 5 — Decision Tree (baseline + tuned)
+- [ ] Stage 6 — K-Nearest Neighbors (baseline + tuned)
+- [ ] Stage 7 — Naive Bayes (baseline + tuned)
+- [ ] Stage 8 — Support Vector Machine (baseline + tuned)
+- [ ] Stage 9 — Evaluation & model comparison
+- [ ] Stage 10 — Streamlit app
+- [ ] Stage 11 — Documentation & deployment
 
 ## Project layout
 
