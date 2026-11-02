@@ -14,7 +14,7 @@ retraining.
 
 - [x] Stage 1 — Project scaffold & environment
 - [x] Stage 2 — Data acquisition & exploration
-- [ ] Stage 3 — Preprocessing & train/test split
+- [x] Stage 3 — Preprocessing & train/test split
 - [ ] Stage 4 — Logistic Regression, Decision Tree, KNN
 - [ ] Stage 5 — Naive Bayes & SVM
 - [ ] Stage 6 — Evaluation & model comparison
