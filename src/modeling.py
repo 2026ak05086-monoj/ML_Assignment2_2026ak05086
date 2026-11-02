@@ -20,6 +20,7 @@ import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.pipeline import Pipeline
+from sklearn.tree import DecisionTreeClassifier
 
 from src import config
 from src.features import build_preprocessor, make_split
@@ -61,8 +62,14 @@ def logistic_regression_baseline() -> LogisticRegression:
     return LogisticRegression(max_iter=1000, random_state=config.RANDOM_STATE)
 
 
+def decision_tree_baseline() -> DecisionTreeClassifier:
+    """Unrestricted CART tree - expected to overfit heavily before tuning."""
+    return DecisionTreeClassifier(random_state=config.RANDOM_STATE)
+
+
 BASELINE_BUILDERS = {
     "logistic_regression": logistic_regression_baseline,
+    "decision_tree": decision_tree_baseline,
 }
 
 
