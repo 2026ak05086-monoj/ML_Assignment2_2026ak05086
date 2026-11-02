@@ -12,14 +12,14 @@ retraining.
 
 ## Build status
 
-- [x] Stage 1 — Project scaffold & environment
+- [x] Stage 1 — Project initialization & environment setup
 - [x] Stage 2 — Data acquisition & exploration
-- [x] Stage 3 — Preprocessing & train/test split
-- [x] Stage 4 — Logistic Regression (baseline + tuned)
-- [ ] Stage 5 — Decision Tree (baseline + tuned)
-- [ ] Stage 6 — K-Nearest Neighbors (baseline + tuned)
-- [ ] Stage 7 — Naive Bayes (baseline + tuned)
-- [ ] Stage 8 — Support Vector Machine (baseline + tuned)
+- [x] Stage 3 — Preprocessing & train/test data split
+- [x] Stage 4 — Logistic Regression 
+- [x] Stage 5 — Decision Tree 
+- [ ] Stage 6 — K-Nearest Neighbors 
+- [ ] Stage 7 — Naive Bayes 
+- [ ] Stage 8 — Support Vector Machine
 - [ ] Stage 9 — Evaluation & model comparison
 - [ ] Stage 10 — Streamlit app
 - [ ] Stage 11 — Documentation & deployment
@@ -28,7 +28,7 @@ retraining.
 
 ```
 2/
-├── app.py                 # Streamlit evaluation dashboard (added in Stage 7)
+├── app.py                 # Streamlit evaluation dashboard
 ├── requirements.txt       # runtime dependencies
 ├── README.md              # this file
 ├── test_data.csv          # held-out test split: input features + target

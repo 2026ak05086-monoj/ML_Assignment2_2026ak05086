@@ -13,6 +13,7 @@ import sys
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.tree import DecisionTreeClassifier
 
 from src import config
 from src.features import make_split
@@ -33,8 +34,21 @@ def tune_logistic_regression():
     return GridSearchCV(build_pipeline(base), grid, scoring=SCORING, cv=CV, n_jobs=-1)
 
 
+def tune_decision_tree():
+    """Search tree depth, leaf size, split criterion and class weighting."""
+    base = DecisionTreeClassifier(random_state=config.RANDOM_STATE)
+    grid = {
+        "classifier__max_depth": [4, 6, 8, 12, None],
+        "classifier__min_samples_leaf": [1, 5, 10, 20],
+        "classifier__criterion": ["gini", "entropy"],
+        "classifier__class_weight": [None, "balanced"],
+    }
+    return GridSearchCV(build_pipeline(base), grid, scoring=SCORING, cv=CV, n_jobs=-1)
+
+
 TUNERS = {
     "logistic_regression": tune_logistic_regression,
+    "decision_tree": tune_decision_tree,
 }
 
 
