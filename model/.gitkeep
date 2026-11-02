@@ -1,0 +1,2 @@
+# Keeps the empty model/ folder under version control.
+# Trained pipelines (*.joblib) are written here in Stages 4-5.
