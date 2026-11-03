@@ -19,6 +19,7 @@ from pathlib import Path
 import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
 
@@ -67,9 +68,15 @@ def decision_tree_baseline() -> DecisionTreeClassifier:
     return DecisionTreeClassifier(random_state=config.RANDOM_STATE)
 
 
+def knn_baseline() -> KNeighborsClassifier:
+    """Default k-NN (k=5, uniform weights) over the scaled feature space."""
+    return KNeighborsClassifier()
+
+
 BASELINE_BUILDERS = {
     "logistic_regression": logistic_regression_baseline,
     "decision_tree": decision_tree_baseline,
+    "knn": knn_baseline,
 }
 
 
