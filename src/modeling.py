@@ -19,6 +19,7 @@ from pathlib import Path
 import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
@@ -73,10 +74,16 @@ def knn_baseline() -> KNeighborsClassifier:
     return KNeighborsClassifier()
 
 
+def naive_bayes_baseline() -> GaussianNB:
+    """Gaussian Naive Bayes with library defaults (var_smoothing=1e-9)."""
+    return GaussianNB()
+
+
 BASELINE_BUILDERS = {
     "logistic_regression": logistic_regression_baseline,
     "decision_tree": decision_tree_baseline,
     "knn": knn_baseline,
+    "naive_bayes": naive_bayes_baseline,
 }
 
 
