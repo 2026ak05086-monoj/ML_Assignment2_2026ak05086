@@ -22,6 +22,7 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 from src import config
@@ -79,11 +80,17 @@ def naive_bayes_baseline() -> GaussianNB:
     return GaussianNB()
 
 
+def svm_baseline() -> SVC:
+    """RBF-kernel SVM; probability estimates on so AUC can be computed later."""
+    return SVC(probability=True, random_state=config.RANDOM_STATE)
+
+
 BASELINE_BUILDERS = {
     "logistic_regression": logistic_regression_baseline,
     "decision_tree": decision_tree_baseline,
     "knn": knn_baseline,
     "naive_bayes": naive_bayes_baseline,
+    "svm": svm_baseline,
 }
 
 
