@@ -15,6 +15,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 from src import config
@@ -70,11 +71,23 @@ def tune_naive_bayes():
     return GridSearchCV(estimator, grid, scoring=SCORING, cv=CV, n_jobs=-1)
 
 
+def tune_svm():
+    """Search penalty C, kernel width gamma and class weighting for an RBF SVM."""
+    base = SVC(probability=True, random_state=config.RANDOM_STATE)
+    grid = {
+        "classifier__C": [1, 10],
+        "classifier__gamma": ["scale", 0.1],
+        "classifier__class_weight": [None, "balanced"],
+    }
+    return GridSearchCV(build_pipeline(base), grid, scoring=SCORING, cv=CV, n_jobs=-1)
+
+
 TUNERS = {
     "logistic_regression": tune_logistic_regression,
     "decision_tree": tune_decision_tree,
     "knn": tune_knn,
     "naive_bayes": tune_naive_bayes,
+    "svm": tune_svm,
 }
 
 
