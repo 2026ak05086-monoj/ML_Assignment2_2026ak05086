@@ -43,7 +43,7 @@ AVERAGE = "weighted"
 METRIC_ORDER = ["Accuracy", "AUC", "Precision", "Recall", "F1", "MCC"]
 
 
-def _load_models() -> dict[str, tuple[str, object]]:
+def load_saved_models() -> dict[str, tuple[str, object]]:
     """Return ``{key: (display_name, pipeline)}`` for every saved model."""
     loaded = {}
     for key, (display, filename) in config.MODEL_REGISTRY.items():
@@ -67,7 +67,8 @@ def _auc_score(model, features, target) -> float:
     )
 
 
-def _metrics_for(model, features, target) -> dict[str, float]:
+def score_model(model, features, target) -> dict[str, float]:
+    """Compute the six assignment metrics for one model on given data."""
     predicted = model.predict(features)
     return {
         "Accuracy": accuracy_score(target, predicted),
@@ -108,11 +109,11 @@ def _plot_confusions(models, features, target, out_path) -> None:
 def evaluate() -> pd.DataFrame:
     config.ensure_directories()
     _, x_test, _, y_test = make_split()
-    models = _load_models()
+    models = load_saved_models()
     if not models:
         raise RuntimeError("No saved models found in model/. Train them first.")
 
-    scores = {display: _metrics_for(model, x_test, y_test)
+    scores = {display: score_model(model, x_test, y_test)
               for _, (display, model) in models.items()}
     table = pd.DataFrame(scores).T[METRIC_ORDER].round(4)
 
