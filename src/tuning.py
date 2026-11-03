@@ -13,6 +13,7 @@ import sys
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
@@ -58,10 +59,22 @@ def tune_knn():
     return GridSearchCV(estimator, grid, scoring=SCORING, cv=CV, n_jobs=-1)
 
 
+def tune_naive_bayes():
+    """Search the Gaussian smoothing factor (variance floor)."""
+    grid = {
+        "classifier__var_smoothing": [
+            1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1,
+        ],
+    }
+    estimator = build_pipeline(GaussianNB())
+    return GridSearchCV(estimator, grid, scoring=SCORING, cv=CV, n_jobs=-1)
+
+
 TUNERS = {
     "logistic_regression": tune_logistic_regression,
     "decision_tree": tune_decision_tree,
     "knn": tune_knn,
+    "naive_bayes": tune_naive_bayes,
 }
 
 
