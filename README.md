@@ -17,7 +17,7 @@ retraining.
 - [x] Stage 3 — Preprocessing & train/test data split
 - [x] Stage 4 — Logistic Regression 
 - [x] Stage 5 — Decision Tree 
-- [ ] Stage 6 — K-Nearest Neighbors 
+- [x] Stage 6 — K-Nearest Neighbors 
 - [ ] Stage 7 — Naive Bayes 
 - [ ] Stage 8 — Support Vector Machine
 - [ ] Stage 9 — Evaluation & model comparison

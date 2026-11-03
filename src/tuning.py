@@ -13,6 +13,7 @@ import sys
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
 from src import config
@@ -46,9 +47,21 @@ def tune_decision_tree():
     return GridSearchCV(build_pipeline(base), grid, scoring=SCORING, cv=CV, n_jobs=-1)
 
 
+def tune_knn():
+    """Search neighbourhood size, weighting scheme and the distance metric."""
+    grid = {
+        "classifier__n_neighbors": [5, 11, 15, 21, 31],
+        "classifier__weights": ["uniform", "distance"],
+        "classifier__p": [1, 2],  # 1 = Manhattan, 2 = Euclidean
+    }
+    estimator = build_pipeline(KNeighborsClassifier())
+    return GridSearchCV(estimator, grid, scoring=SCORING, cv=CV, n_jobs=-1)
+
+
 TUNERS = {
     "logistic_regression": tune_logistic_regression,
     "decision_tree": tune_decision_tree,
+    "knn": tune_knn,
 }
 
 
