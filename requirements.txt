@@ -1,7 +1,12 @@
-streamlit
-scikit-learn
-numpy
-pandas
-matplotlib
-seaborn
-joblib
+# Pinned to the versions the models were trained with, so the saved
+# model/*.joblib pipelines load on Streamlit Community Cloud without any
+# version-mismatch warnings or errors. (Dependency issues are the #1 cause
+# of deployment failure.)
+streamlit==1.66.1
+scikit-learn==1.9.1
+numpy==2.5.2
+scipy==1.18.1
+pandas==3.0.5
+joblib==1.5.3
+matplotlib==3.11.1
+seaborn==0.13.2
