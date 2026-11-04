@@ -58,9 +58,45 @@ def split_features_target(frame: pd.DataFrame):
     return frame[FEATURE_COLUMNS].copy(), frame[config.TARGET_COLUMN].copy(), []
 
 
-def html_table(frame: pd.DataFrame) -> str:
-    """A DataFrame as a horizontally-scrollable HTML table (no JS widget)."""
-    return f'<div style="overflow-x:auto">{frame.to_html(border=0)}</div>'
+def html_table(frame: pd.DataFrame, highlight_max: bool = False,
+               value_format: str | None = None) -> str:
+    """Render a DataFrame as an inline-styled HTML table (no JS widget).
+
+    Column headers and the row-index labels are always bold. When
+    ``highlight_max`` is set, the largest value in each numeric column is shown
+    with a green, bold cell.
+    """
+    max_mask = None
+    if highlight_max:
+        numeric = frame.apply(pd.to_numeric, errors="coerce")
+        max_mask = numeric.eq(numeric.max())
+
+    def cell(value: object) -> str:
+        if value_format is not None and isinstance(value, float):
+            return value_format.format(value)
+        return "" if pd.isna(value) else str(value)
+
+    header = "".join(
+        f'<th style="padding:6px 12px;background:#eef1f5;font-weight:700;'
+        f'border:1px solid #dfe3e8;text-align:center">{col}</th>'
+        for col in frame.columns
+    )
+    body = ""
+    for idx, row in frame.iterrows():
+        cells = ""
+        for col in frame.columns:
+            style = "padding:6px 12px;border:1px solid #eceff3;text-align:center;"
+            if max_mask is not None and bool(max_mask.loc[idx, col]):
+                style += "background:#b7e4c7;font-weight:700;"
+            cells += f'<td style="{style}">{cell(row[col])}</td>'
+        body += (f'<tr><th style="padding:6px 12px;border:1px solid #eceff3;'
+                 f'background:#fafbfc;font-weight:700;text-align:left">{idx}</th>'
+                 f'{cells}</tr>')
+
+    table = ('<table style="border-collapse:collapse;width:100%;font-size:0.9rem">'
+             f'<tr><th style="background:#eef1f5;border:1px solid #dfe3e8"></th>'
+             f'{header}</tr>{body}</table>')
+    return f'<div style="overflow-x:auto">{table}</div>'
 
 
 def figure_to_html(fig) -> str:
@@ -173,13 +209,14 @@ if missing:
 
 st.success(f"Loaded **{len(frame):,}** rows from {source_label}.")
 with st.expander("Preview data & class balance"):
-    balance = target.value_counts().reindex(config.CLASS_ORDER).rename("count")
+    balance = target.value_counts().reindex(config.CLASS_ORDER).fillna(0).astype(int)
+    balance.loc["Total"] = int(balance.sum())
     st.write(f"**Shape:** {frame.shape[0]:,} rows x {frame.shape[1]} columns")
     st.caption("First 4 rows (transposed - features shown as rows)")
     st.markdown(html_table(frame.head(4).reset_index(drop=True).T),
                 unsafe_allow_html=True)
     st.caption("Class balance")
-    st.markdown(html_table(balance.to_frame()), unsafe_allow_html=True)
+    st.markdown(html_table(balance.rename("count").to_frame()), unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------- #
 # Results
@@ -189,7 +226,8 @@ if choice == COMPARE_ALL:
     rows = {display: score_model(model, features, target)
             for _, (display, model) in models.items()}
     table = pd.DataFrame(rows).T[METRIC_HELP].round(4)
-    st.markdown(html_table(table.map(lambda v: f"{v:.4f}")), unsafe_allow_html=True)
+    st.markdown(html_table(table, highlight_max=True, value_format="{:.4f}"),
+                unsafe_allow_html=True)
     st.caption("Higher is better for every metric.")
     st.markdown(figure_to_html(comparison_bar_figure(table)), unsafe_allow_html=True)
 else:
@@ -208,8 +246,8 @@ else:
                     unsafe_allow_html=True)
     with panel_right:
         st.markdown("**Classification report**")
-        st.markdown(html_table(classification_frame(model, features, target)),
-                    unsafe_allow_html=True)
+        st.markdown(html_table(classification_frame(model, features, target),
+                               value_format="{:.3f}"), unsafe_allow_html=True)
 
 st.divider()
 st.caption("UCI dataset #697 · five scikit-learn pipelines · Machine Learning Assignment 2")
