@@ -228,6 +228,14 @@ with st.sidebar:
     st.header("1 · Test data")
     uploaded = st.file_uploader("Upload a CSV (features + Target)", type=["csv"])
     use_sample = st.checkbox("Use the bundled sample (test_data.csv)", value=True)
+    if config.SAMPLE_INPUT_FILE.exists():
+        st.download_button(
+            "⬇️ Download a sample input CSV",
+            data=config.SAMPLE_INPUT_FILE.read_bytes(),
+            file_name="sample_input.csv",
+            mime="text/csv",
+            help="Example of the required format: all 36 features + the Target column.",
+        )
 
     st.header("2 · Model")
     display_names = [display for _, (display, _) in models.items()]

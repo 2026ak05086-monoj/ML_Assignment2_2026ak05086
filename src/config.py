@@ -23,6 +23,9 @@ FIGURE_DIR = REPORTS_DIR / "figures"
 # CSV the evaluator uploads in the Streamlit app (held-out test split only).
 TEST_DATA_FILE = PROJECT_ROOT / "test_data.csv"
 
+# A small, ready-to-download CSV illustrating the expected upload format.
+SAMPLE_INPUT_FILE = PROJECT_ROOT / "sample input file.csv"
+
 # --- Dataset ---------------------------------------------------------------
 # UCI ML Repository #697 - "Predict Students' Dropout and Academic Success".
 UCI_DATASET_ID = 697
