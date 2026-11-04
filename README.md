@@ -105,6 +105,6 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-> **Live app:** `https://<your-app>.streamlit.app` _(added after deployment)._
+> **Live app:** <https://mlassignment-22026ak05086.streamlit.app/>
 
 
