@@ -142,14 +142,16 @@ def classification_frame(model, features, target) -> pd.DataFrame:
 
 
 def comparison_bar_figure(table: pd.DataFrame):
-    columns = ["Accuracy", "F1", "MCC"]
-    fig, ax = plt.subplots(figsize=(16, 4.5))
-    table[columns].plot(kind="bar", ax=ax, colormap="viridis", width=0.8)
+    columns = ["Accuracy", "AUC", "Precision", "Recall", "F1", "MCC"]
+    fig, ax = plt.subplots(figsize=(16, 5))
+    table[columns].plot(kind="bar", ax=ax, colormap="viridis", width=0.82)
     ax.set_ylabel("Score")
     ax.set_ylim(0, 1)
     ax.set_xticklabels(table.index, rotation=0)
-    # Legend parked in the empty top-right area so it never covers the bars.
-    ax.legend(loc="upper right", ncol=3, fontsize=11, framealpha=0.9)
+    # All six metrics now included; AUC reaches ~0.9, so the top-right is no
+    # longer empty - park the legend as one row just above the chart instead.
+    ax.legend(loc="lower right", bbox_to_anchor=(1.0, 1.01),
+              ncol=6, fontsize=10, frameon=False)
     fig.tight_layout()
     return fig
 
