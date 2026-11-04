@@ -49,13 +49,18 @@ def get_models():
 
 
 def split_features_target(frame: pd.DataFrame):
-    """Return (X, y, missing_columns) after validating the uploaded frame."""
-    missing = [c for c in FEATURE_COLUMNS if c not in frame.columns]
-    if config.TARGET_COLUMN not in frame.columns:
-        missing = missing + [config.TARGET_COLUMN]
-    if missing:
-        return None, None, missing
-    return frame[FEATURE_COLUMNS].copy(), frame[config.TARGET_COLUMN].copy(), []
+    """Validate the uploaded frame and split it into (X, y).
+
+    Both the full set of input features **and** the target column are required.
+    Returns ``(X, y, None)`` when valid, otherwise ``(None, None, problems)``
+    where ``problems`` reports the missing features and whether the target
+    column is absent.
+    """
+    missing_features = [c for c in FEATURE_COLUMNS if c not in frame.columns]
+    target_missing = config.TARGET_COLUMN not in frame.columns
+    if missing_features or target_missing:
+        return None, None, {"features": missing_features, "target_missing": target_missing}
+    return frame[FEATURE_COLUMNS].copy(), frame[config.TARGET_COLUMN].copy(), None
 
 
 def html_table(frame: pd.DataFrame, highlight_max: bool = False,
@@ -225,10 +230,25 @@ if frame is None:
                  f"{', '.join(config.CLASS_ORDER)}.")
     st.stop()
 
-features, target, missing = split_features_target(frame)
-if missing:
-    shown = ", ".join(missing[:8]) + (" …" if len(missing) > 8 else "")
-    st.error(f"The uploaded CSV is missing required column(s): {shown}")
+features, target, problems = split_features_target(frame)
+if problems:
+    issues = []
+    if problems["target_missing"]:
+        issues.append(f"the target column **`{config.TARGET_COLUMN}`** is missing")
+    if problems["features"]:
+        miss = problems["features"]
+        preview = ", ".join(miss[:6]) + (f", … (+{len(miss) - 6} more)" if len(miss) > 6 else "")
+        issues.append(f"**{len(miss)}** required feature column(s) missing ({preview})")
+    st.error("Invalid test CSV — " + "; ".join(issues) + ".")
+    st.info(f"The uploaded file must contain all **{len(FEATURE_COLUMNS)}** input "
+            f"features **plus** the **`{config.TARGET_COLUMN}`** column.")
+    st.stop()
+
+# The target column must only hold the known outcome classes.
+unexpected = sorted(set(map(str, target.unique())) - set(config.CLASS_ORDER))
+if unexpected:
+    st.error(f"The `{config.TARGET_COLUMN}` column has unexpected value(s): "
+             f"{', '.join(unexpected)}. Expected one of: {', '.join(config.CLASS_ORDER)}.")
     st.stop()
 
 st.success(f"Loaded **{len(frame):,}** rows from {source_label}.")
