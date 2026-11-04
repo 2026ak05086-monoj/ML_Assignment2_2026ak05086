@@ -11,7 +11,7 @@ retraining.
 
 ---
 
-## a. Problem statement
+## a. Problem Statement
 
 Student attrition is a costly problem for universities and a life-changing one
 for students. The goal of this project is to predict a student's **academic
@@ -23,7 +23,7 @@ flag at-risk students early enough to offer support. Because the three outcomes
 are imbalanced, the project is evaluated with imbalance-aware metrics (AUC, F1
 and MCC) rather than accuracy alone.
 
-## b. Dataset description
+## b. Dataset Description
 
 - **Source:** UCI Machine Learning Repository — *Predict Students' Dropout and
   Academic Success* (dataset ID 697).
@@ -52,7 +52,7 @@ The repository contains the complete source code, `requirements.txt`, this
 `README.md`, the held-out `test_data.csv`, and the five trained pipelines under
 `model/`.
 
-## d. Models used
+## d. Models Used
 
 All five classifiers were trained on the **same** 80/20 stratified split of the
 dataset. Each model is a scikit-learn `Pipeline` that embeds the shared
@@ -75,7 +75,7 @@ Recall, F1 and AUC use **weighted** averaging; AUC is one-vs-rest.
 Confusion matrices for every model are in
 `reports/figures/confusion_matrices.png`.
 
-### Observations on model performance
+### Observations on Model Performance
 
 | ML Model Name | Observation about model performance |
 |---------------|-------------------------------------|
@@ -89,7 +89,7 @@ Confusion matrices for every model are in
 ---
 
 
-## Streamlit app
+## Streamlit App
 
 The app (`app.py`) loads the saved pipelines and lets you:
 
