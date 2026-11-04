@@ -206,6 +206,27 @@ def roc_curves_figure(models, features, target):
     return fig
 
 
+def roc_per_class_figure(model, display, features, target):
+    """Per-class one-vs-rest ROC curves for a single selected model."""
+    y_bin = label_binarize(target, classes=config.CLASS_ORDER)
+    proba = model.predict_proba(features)
+    order = [list(model.classes_).index(c) for c in config.CLASS_ORDER]
+    proba = proba[:, order]
+    fig, ax = plt.subplots(figsize=(8, 6))
+    for index, cls in enumerate(config.CLASS_ORDER):
+        fpr, tpr, _ = roc_curve(y_bin[:, index], proba[:, index])
+        ax.plot(fpr, tpr, lw=1.8, label=f"{cls} vs rest (AUC = {auc(fpr, tpr):.3f})")
+    ax.plot([0, 1], [0, 1], "k--", lw=1, alpha=0.6, label="Chance")
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1.02)
+    ax.set_xlabel("False positive rate")
+    ax.set_ylabel("True positive rate")
+    ax.set_title(display, fontsize=11)
+    ax.legend(loc="lower right", fontsize=9)
+    fig.tight_layout()
+    return fig
+
+
 # --------------------------------------------------------------------------- #
 # Header
 # --------------------------------------------------------------------------- #
@@ -318,6 +339,10 @@ if choice == COMPARE_ALL:
         st.caption(display)
         st.markdown(html_table(classification_frame(model, features, target),
                                value_format="{:.3f}"), unsafe_allow_html=True)
+
+    st.markdown("**ROC curves — all models (one-vs-rest, micro-averaged)**")
+    st.markdown(figure_to_html(roc_curves_figure(models, features, target)),
+                unsafe_allow_html=True)
 else:
     key = next(k for k, (display, _) in models.items() if display == choice)
     _, model = models[key]
@@ -337,12 +362,9 @@ else:
         st.markdown(html_table(classification_frame(model, features, target),
                                value_format="{:.3f}"), unsafe_allow_html=True)
 
-# Shown regardless of the dropdown selection.
-st.divider()
-st.subheader("ROC curves — all models (one-vs-rest)")
-st.caption("Micro-averaged across the three outcome classes.")
-st.markdown(figure_to_html(roc_curves_figure(models, features, target)),
-            unsafe_allow_html=True)
+    st.markdown("**ROC curves — per class (one-vs-rest)**")
+    st.markdown(figure_to_html(roc_per_class_figure(model, choice, features, target)),
+                unsafe_allow_html=True)
 
 st.divider()
 st.caption("UCI dataset #697 · five scikit-learn pipelines · Machine Learning Assignment 2")
