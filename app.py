@@ -29,7 +29,13 @@ import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 import seaborn as sns  # noqa: E402
 import streamlit as st  # noqa: E402
-from sklearn.metrics import classification_report, confusion_matrix  # noqa: E402
+from sklearn.metrics import (  # noqa: E402
+    auc,
+    classification_report,
+    confusion_matrix,
+    roc_curve,
+)
+from sklearn.preprocessing import label_binarize  # noqa: E402
 
 from src import config  # noqa: E402
 from src.evaluation import load_saved_models, score_model  # noqa: E402
@@ -181,6 +187,25 @@ def all_confusions_figure(models, features, target):
     return fig
 
 
+def roc_curves_figure(models, features, target):
+    """Micro-average one-vs-rest ROC curve for every model (always shown)."""
+    y_bin = label_binarize(target, classes=config.CLASS_ORDER)
+    fig, ax = plt.subplots(figsize=(8, 6))
+    for _, (display, model) in models.items():
+        proba = model.predict_proba(features)
+        order = [list(model.classes_).index(c) for c in config.CLASS_ORDER]
+        fpr, tpr, _ = roc_curve(y_bin.ravel(), proba[:, order].ravel())
+        ax.plot(fpr, tpr, lw=1.8, label=f"{display} (AUC = {auc(fpr, tpr):.3f})")
+    ax.plot([0, 1], [0, 1], "k--", lw=1, alpha=0.6, label="Chance")
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1.02)
+    ax.set_xlabel("False positive rate")
+    ax.set_ylabel("True positive rate")
+    ax.legend(loc="lower right", fontsize=9)
+    fig.tight_layout()
+    return fig
+
+
 # --------------------------------------------------------------------------- #
 # Header
 # --------------------------------------------------------------------------- #
@@ -303,6 +328,13 @@ else:
         st.markdown("**Classification report**")
         st.markdown(html_table(classification_frame(model, features, target),
                                value_format="{:.3f}"), unsafe_allow_html=True)
+
+# Shown regardless of the dropdown selection.
+st.divider()
+st.subheader("ROC curves — all models (one-vs-rest)")
+st.caption("Micro-averaged across the three outcome classes.")
+st.markdown(figure_to_html(roc_curves_figure(models, features, target)),
+            unsafe_allow_html=True)
 
 st.divider()
 st.caption("UCI dataset #697 · five scikit-learn pipelines · Machine Learning Assignment 2")
