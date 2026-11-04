@@ -99,14 +99,15 @@ def html_table(frame: pd.DataFrame, highlight_max: bool = False,
     return f'<div style="overflow-x:auto">{table}</div>'
 
 
-def figure_to_html(fig) -> str:
+def figure_to_html(fig, full_width: bool = False) -> str:
     """Embed a matplotlib figure inline as a base64 <img> (no media fetch)."""
     buffer = io.BytesIO()
     fig.savefig(buffer, format="png", dpi=120, bbox_inches="tight")
     plt.close(fig)
     encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
+    width = "width:100%;" if full_width else "max-width:100%;"
     return (f'<img src="data:image/png;base64,{encoded}" '
-            f'style="max-width:100%;height:auto;"/>')
+            f'style="{width}height:auto;"/>')
 
 
 def metric_cards(scores: dict) -> str:
@@ -142,12 +143,13 @@ def classification_frame(model, features, target) -> pd.DataFrame:
 
 def comparison_bar_figure(table: pd.DataFrame):
     columns = ["Accuracy", "F1", "MCC"]
-    fig, ax = plt.subplots(figsize=(8, 3.6))
+    fig, ax = plt.subplots(figsize=(16, 4.5))
     table[columns].plot(kind="bar", ax=ax, colormap="viridis", width=0.8)
     ax.set_ylabel("Score")
     ax.set_ylim(0, 1)
-    ax.set_xticklabels(table.index, rotation=20, ha="right")
-    ax.legend(loc="lower right", fontsize=8)
+    ax.set_xticklabels(table.index, rotation=0)
+    # Legend parked in the empty top-right area so it never covers the bars.
+    ax.legend(loc="upper right", ncol=3, fontsize=11, framealpha=0.9)
     fig.tight_layout()
     return fig
 
@@ -249,7 +251,8 @@ if choice == COMPARE_ALL:
     st.markdown(html_table(table, highlight_max=True, value_format="{:.4f}"),
                 unsafe_allow_html=True)
     st.caption("Higher is better for every metric.")
-    st.markdown(figure_to_html(comparison_bar_figure(table)), unsafe_allow_html=True)
+    st.markdown(figure_to_html(comparison_bar_figure(table), full_width=True),
+                unsafe_allow_html=True)
 
     st.markdown("**Confusion matrix — all models**")
     st.markdown(figure_to_html(all_confusions_figure(models, features, target)),
