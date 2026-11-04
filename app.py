@@ -152,6 +152,26 @@ def comparison_bar_figure(table: pd.DataFrame):
     return fig
 
 
+def all_confusions_figure(models, features, target):
+    """Confusion matrices for every model on one figure (for the compare view)."""
+    count = len(models)
+    cols = 3
+    grid_rows = (count + cols - 1) // cols
+    fig, axes = plt.subplots(grid_rows, cols, figsize=(13, 4.0 * grid_rows))
+    axes = axes.ravel()
+    for ax, (_, (display, model)) in zip(axes, models.items()):
+        matrix = confusion_matrix(target, model.predict(features), labels=config.CLASS_ORDER)
+        sns.heatmap(matrix, annot=True, fmt="d", cmap="Blues", cbar=False,
+                    xticklabels=config.CLASS_ORDER, yticklabels=config.CLASS_ORDER, ax=ax)
+        ax.set_title(display, fontsize=10)
+        ax.set_xlabel("Predicted")
+        ax.set_ylabel("Actual")
+    for ax in axes[count:]:
+        ax.axis("off")
+    fig.tight_layout()
+    return fig
+
+
 # --------------------------------------------------------------------------- #
 # Header
 # --------------------------------------------------------------------------- #
@@ -230,6 +250,10 @@ if choice == COMPARE_ALL:
                 unsafe_allow_html=True)
     st.caption("Higher is better for every metric.")
     st.markdown(figure_to_html(comparison_bar_figure(table)), unsafe_allow_html=True)
+
+    st.markdown("**Confusion matrix — all models**")
+    st.markdown(figure_to_html(all_confusions_figure(models, features, target)),
+                unsafe_allow_html=True)
 else:
     key = next(k for k, (display, _) in models.items() if display == choice)
     _, model = models[key]
