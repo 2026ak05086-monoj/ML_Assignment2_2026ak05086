@@ -254,6 +254,12 @@ if choice == COMPARE_ALL:
     st.markdown("**Confusion matrix — all models**")
     st.markdown(figure_to_html(all_confusions_figure(models, features, target)),
                 unsafe_allow_html=True)
+
+    st.markdown("**Classification report — per model**")
+    for _, (display, model) in models.items():
+        st.caption(display)
+        st.markdown(html_table(classification_frame(model, features, target),
+                               value_format="{:.3f}"), unsafe_allow_html=True)
 else:
     key = next(k for k, (display, _) in models.items() if display == choice)
     _, model = models[key]
