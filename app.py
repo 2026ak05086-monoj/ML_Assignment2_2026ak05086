@@ -212,8 +212,8 @@ with st.expander("Preview data & class balance"):
     balance = target.value_counts().reindex(config.CLASS_ORDER).fillna(0).astype(int)
     balance.loc["Total"] = int(balance.sum())
     st.write(f"**Shape:** {frame.shape[0]:,} rows x {frame.shape[1]} columns")
-    st.caption("First 4 rows (transposed - features shown as rows)")
-    st.markdown(html_table(frame.head(4).reset_index(drop=True).T),
+    st.caption("First 5 rows")
+    st.markdown(html_table(frame.head(5).reset_index(drop=True)),
                 unsafe_allow_html=True)
     st.caption("Class balance")
     st.markdown(html_table(balance.rename("count").to_frame()), unsafe_allow_html=True)
