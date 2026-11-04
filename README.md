@@ -89,27 +89,6 @@ Confusion matrices for every model are in
 ---
 
 
-## How to reproduce
-
-```bash
-pip install -r requirements.txt
-
-# 1) fetch data, explore, build the split + test_data.csv
-python -m src.dataset
-python -m src.eda
-python -m src.features
-
-# 2) train (baseline) and tune (saves model/*.joblib) each model
-python -m src.tuning logistic_regression
-python -m src.tuning decision_tree
-python -m src.tuning knn
-python -m src.tuning naive_bayes
-python -m src.tuning svm
-
-# 3) score all five models on the held-out test set
-python -m src.evaluation
-```
-
 ## Streamlit app
 
 The app (`app.py`) loads the saved pipelines and lets you:
@@ -122,6 +101,7 @@ The app (`app.py`) loads the saved pipelines and lets you:
 Run it locally with:
 
 ```bash
+pip install -r requirements.txt
 streamlit run app.py
 ```
 
