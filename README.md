@@ -98,6 +98,8 @@ The app (`app.py`) loads the saved pipelines and lets you:
 - View the six evaluation metrics, and
 - Inspect the confusion matrix / classification report
 
+```Note: CSV file must contain all the features and target column. You can refer to sample file which can be downloaded using "Download a Sample input CSV" option.```
+
 Run it locally with:
 
 ```bash
